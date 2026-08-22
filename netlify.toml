@@ -38,10 +38,24 @@ for = "/*.html"
   Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
-for = "/images/*"
+for = "/images/*.webp"
 
   [headers.values]
   Content-Type = "image/webp"
+  Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/images/*.jpg"
+
+  [headers.values]
+  Content-Type = "image/jpeg"
+  Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/images/*.png"
+
+  [headers.values]
+  Content-Type = "image/png"
   Cache-Control = "public, max-age=31536000, immutable"
 
 [[headers]]
