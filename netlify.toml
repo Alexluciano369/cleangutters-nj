@@ -2,6 +2,13 @@
   command = ""
   publish = "."
 
+# Redirect Netlify subdomain to custom domain, preserving path/query/hash
+[[redirects]]
+  from = "https://cleangutters-nj.netlify.app/*"
+  to = "https://cleangutters-nj.com/:splat"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "/cleaning"
   to = "https://cleangutterslighting.com/gutter-cleaning"
