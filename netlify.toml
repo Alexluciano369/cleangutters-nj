@@ -1,6 +1,3 @@
-plugins = []
-redirects = []
-
 [[redirects]]
 from = "/cleaning"
 to = "https://cleangutterslighting.com/gutter-cleaning"
