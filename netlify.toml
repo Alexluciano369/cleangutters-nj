@@ -1,66 +1,6 @@
 plugins = []
 redirects = []
 
-[[redirects]]
-from = "/cleaning"
-to = "https://cleangutterslighting.com/gutter-cleaning"
-status = 301
-force = true
-
-[[redirects]]
-from = "/cleaning.html"
-to = "https://cleangutterslighting.com/gutter-cleaning"
-status = 301
-force = true
-
-[[redirects]]
-from = "/repair"
-to = "https://cleangutterslighting.com/gutter-repair"
-status = 301
-force = true
-
-[[redirects]]
-from = "/repair.html"
-to = "https://cleangutterslighting.com/gutter-repair"
-status = 301
-force = true
-
-[[redirects]]
-from = "/gutter-guard-installation-cherry-hill-nj/"
-to = "https://cleangutterslighting.com/service-areas/cherry-hill-nj"
-status = 301
-force = true
-
-[[redirects]]
-from = "/gutter-guard-installation-cherry-hill-nj"
-to = "https://cleangutterslighting.com/service-areas/cherry-hill-nj"
-status = 301
-force = true
-
-[[redirects]]
-from = "/gutter-guard-installation-near-cherry-hill/"
-to = "https://cleangutterslighting.com/service-areas/cherry-hill-nj"
-status = 301
-force = true
-
-[[redirects]]
-from = "/gutter-guard-installation-near-cherry-hill"
-to = "https://cleangutterslighting.com/service-areas/cherry-hill-nj"
-status = 301
-force = true
-
-[[redirects]]
-from = "/cherry-hill-gutter-guards"
-to = "https://cleangutterslighting.com/service-areas/cherry-hill-nj"
-status = 301
-force = true
-
-[[redirects]]
-from = "/cherry-hill-gutter-guards.html"
-to = "https://cleangutterslighting.com/service-areas/cherry-hill-nj"
-status = 301
-force = true
-
 [functions]
 [functions."*"]
 
@@ -134,4 +74,4 @@ for = "/*.js"
 
 [headers.values]
 Content-Type = "application/javascript; charset=utf-8"
-Cache-Control = "public, max-age=31536000, immutable"
+Cache-Control = "public, max-age=31536000, immutable
