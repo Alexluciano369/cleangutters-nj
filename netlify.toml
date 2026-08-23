@@ -2,6 +2,42 @@
   command = ""
   publish = "."
 
+[[redirects]]
+  from = "/cleaning"
+  to = "https://cleangutterslighting.com/gutter-cleaning"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/cleaning.html"
+  to = "https://cleangutterslighting.com/gutter-cleaning"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/repair"
+  to = "https://cleangutterslighting.com/gutter-repair"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/repair.html"
+  to = "https://cleangutterslighting.com/gutter-repair"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/gutter-guard-installation-cherry-hill-nj"
+  to = "https://cleangutterslighting.com/locations/cherry-hill-nj/gutter-guards/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/gutter-guard-installation-cherry-hill-nj/"
+  to = "https://cleangutterslighting.com/locations/cherry-hill-nj/gutter-guards/"
+  status = 301
+  force = true
+
 [[headers]]
   for = "/"
   [headers.values]
