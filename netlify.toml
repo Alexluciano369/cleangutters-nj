@@ -1,5 +1,5 @@
 [build]
-  command = ""
+  command = "node scripts/inject-confirmed-lead.mjs"
   publish = "."
 
 # Redirect Netlify subdomain to custom domain, preserving path/query/hash
