@@ -12,7 +12,7 @@ if (!source.includes(trackingMarker)) {
 source = source.replace(trackingMarker, trackingReplacement);
 
 const offerMarker = '        <p class="form-sub">⏱ Alex usually responds within 2 business hours</p>';
-const offerReplacement = '        <p class="form-sub"><strong>Fall, senior &amp; military savings available.</strong><br>Ask Alex what applies to your home. No pressure.</p>';
+const offerReplacement = '        <p class="form-sub"><strong>Fall offer: Save $250 on a new gutter guard installation.</strong><br>Seniors and military get 10% off instead — whichever saves more. New installations only. Discounts cannot be combined. Book your free estimate by October 31, 2026. No pressure.</p>';
 
 if (!source.includes(offerMarker)) {
   throw new Error('Estimate-form offer marker was not found in index.html');
@@ -20,7 +20,7 @@ if (!source.includes(offerMarker)) {
 source = source.replace(offerMarker, offerReplacement);
 
 const titleMarker = '<h2>Get Your Free Estimate</h2>';
-const titleReplacement = '<h2>Get a Free Gutter Guard Estimate</h2>';
+const titleReplacement = '<h2>Save $250 on Gutter Guard Installation</h2>';
 if (!source.includes(titleMarker)) {
   throw new Error('Estimate-form title marker was not found in index.html');
 }
@@ -42,7 +42,7 @@ if (!source.includes(serviceMarker)) {
   throw new Error('Estimate-form service field marker was not found in index.html');
 }
 source = source.replace(serviceMarker, serviceReplacement);
-source = source.replace('Get My Free Estimate →', 'Get My Free Gutter Guard Estimate →');
+source = source.replace('Get My Free Estimate →', 'Claim My $250 Savings →');
 
 await writeFile(file, source);
-console.log('Optimized gutter-guard form, offer message and confirmed-lead tracking.');
+console.log('Added exact $250 offer, senior and military terms, short form and lead tracking.');
