@@ -2,6 +2,12 @@
   command = "node scripts/inject-confirmed-lead.mjs"
   publish = "."
 
+# This domain is for paid campaign landing pages. Organic search belongs to cleangutterslighting.com.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, follow"
+
 # Redirect Netlify subdomain to custom domain, preserving path/query/hash
 [[redirects]]
   from = "https://cleangutters-nj.netlify.app/*"
