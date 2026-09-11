@@ -1,0 +1,41 @@
+name: Place field photos
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/place-field-photos.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  place:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add real owner and product photos to paid pages
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          figure = '<figure style="margin:24px 0 28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;align-items:stretch"><picture><source srcset="/images/alex-owner-installing-gutter-guards.webp" type="image/webp"><img src="/images/alex-owner-installing-gutter-guards.jpg" alt="Alex, owner of CleanGutters Lighting, personally working on a local roof" loading="lazy" width="768" height="1024" style="width:100%;height:360px;object-fit:cover;border-radius:14px"></picture><picture><source srcset="/images/gutter-guard-micro-mesh-installed.webp" type="image/webp"><img src="/images/gutter-guard-micro-mesh-installed.jpg" alt="Stainless-steel micro-mesh gutter protection installed on a local home" loading="lazy" width="768" height="1024" style="width:100%;height:360px;object-fit:cover;border-radius:14px"></picture><figcaption style="grid-column:1/-1;color:#475569;font-size:.95rem">Real CleanGutters Lighting work. Alex personally handles the inspection and installation.</figcaption></figure>'
+          for name in ['gutter-cleaning/index.html','gutter-repair/index.html','gutter-installation/index.html']:
+              p=Path(name)
+              s=p.read_text()
+              s=s.replace('<meta name="robots" content="index, follow">','<meta name="robots" content="noindex, follow">')
+              if 'alex-owner-installing-gutter-guards' not in s:
+                  s=s.replace('<div class="proof-grid">', figure+'<div class="proof-grid">', 1)
+              p.write_text(s)
+          p=Path('index.html')
+          s=p.read_text()
+          s=s.replace('/images/realwork-2.webp','/images/gutter-guard-micro-mesh-installed.webp',1).replace('/images/realwork-2-opt.jpg','/images/gutter-guard-micro-mesh-installed.jpg',1)
+          s=s.replace('/images/realwork-4.webp','/images/alex-owner-installing-gutter-guards.webp',1).replace('/images/realwork-4-opt.jpg','/images/alex-owner-installing-gutter-guards.jpg',1)
+          s=s.replace('On the Job — Cherry Hill Area','Alex Installs Every Job Personally',1)
+          p.write_text(s)
+          PY
+      - name: Commit page updates
+        run: |
+          git config user.name "CleanGutters site updater"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html gutter-cleaning/index.html gutter-repair/index.html gutter-installation/index.html
+          git commit -m "Use real Alex installation photos on paid pages"
+          git push
