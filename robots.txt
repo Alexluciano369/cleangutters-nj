@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://cleangutters-nj.com/sitemap.xml
