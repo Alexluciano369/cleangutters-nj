@@ -1,0 +1,28 @@
+name: Sync verified upright photos
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/sync-verified-upright-photos.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Copy the visually verified upright files
+        run: |
+          curl -L "https://cleangutters-pa.com/images/alex-owner-installing-gutter-guards.jpg" -o images/alex-owner-installing-gutter-guards.jpg
+          curl -L "https://cleangutters-pa.com/images/alex-owner-installing-gutter-guards.webp" -o images/alex-owner-installing-gutter-guards.webp
+          curl -L "https://cleangutters-pa.com/images/gutter-guard-micro-mesh-installed.jpg" -o images/gutter-guard-micro-mesh-installed.jpg
+          curl -L "https://cleangutters-pa.com/images/gutter-guard-micro-mesh-installed.webp" -o images/gutter-guard-micro-mesh-installed.webp
+      - name: Commit verified photos
+        run: |
+          git config user.name "CleanGutters site updater"
+          git config user.email "actions@users.noreply.github.com"
+          git add images/alex-owner-installing-gutter-guards.* images/gutter-guard-micro-mesh-installed.*
+          git commit -m "Use verified upright photos on NJ pages"
+          git push
