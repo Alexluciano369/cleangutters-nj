@@ -1,0 +1,50 @@
+name: Place guard before and after sections
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  place:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add comparison sections
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          home = Path('index.html')
+          text = home.read_text()
+          marker = 'id="real-guard-before-after"'
+          section = '''  <!-- Real before and after -->
+          <section class="gallery-section" id="real-guard-before-after">
+            <div class="gallery-inner">
+              <span class="section-label">Before &amp; After</span>
+              <h2 class="section-title">Open Gutter to Finished Micro-Mesh Protection</h2>
+              <p class="section-sub">The same local roofline before and after Alex installed the stainless-steel micro-mesh system.</p>
+              <div class="gallery-grid" style="max-width:820px;margin:0 auto;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));">
+                <div class="gallery-card" style="aspect-ratio:3/4"><picture><source srcset="/images/gutter-guard-before-real-job.webp" type="image/webp"><img src="/images/gutter-guard-before-real-job.jpg" alt="Before gutter guard installation: open gutter on a local home" loading="lazy" width="768" height="1024"></picture><div class="caption" style="font-size:1rem">Before · Open gutter</div></div>
+                <div class="gallery-card" style="aspect-ratio:3/4"><picture><source srcset="/images/gutter-guard-after-real-job.webp" type="image/webp"><img src="/images/gutter-guard-after-real-job.jpg" alt="After gutter guard installation: stainless-steel micro-mesh fitted to the same roofline" loading="lazy" width="768" height="1024"></picture><div class="caption" style="font-size:1rem">After · Micro-mesh installed</div></div>
+              </div>
+              <p style="text-align:center;max-width:720px;margin:18px auto 0;color:var(--gray-600)">Real CleanGutters Lighting work. Installed edge to edge with a clean, low-profile finish.</p>
+            </div>
+          </section>
+
+          '''
+          if marker not in text:
+              text = text.replace('  <!-- How It Works -->', section + '  <!-- How It Works -->', 1)
+              home.write_text(text)
+
+          service_section = '''<section class="section alt" id="real-guard-before-after"><div class="inner"><h2>Before &amp; After: Real Micro-Mesh Installation</h2><p class="section-intro">Same local roofline, photographed before and after Alex installed stainless-steel micro-mesh protection.</p><figure style="margin:24px auto 8px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;max-width:820px"><div style="position:relative"><picture><source srcset="/images/gutter-guard-before-real-job.webp" type="image/webp"><img src="/images/gutter-guard-before-real-job.jpg" alt="Before gutter guard installation: open gutter on a local home" loading="lazy" width="768" height="1024" style="width:100%;height:auto;border-radius:14px"></picture><strong style="position:absolute;left:14px;bottom:14px;background:rgba(15,41,64,.9);color:#fff;padding:8px 14px;border-radius:999px">Before</strong></div><div style="position:relative"><picture><source srcset="/images/gutter-guard-after-real-job.webp" type="image/webp"><img src="/images/gutter-guard-after-real-job.jpg" alt="After gutter guard installation: micro-mesh fitted to the same roofline" loading="lazy" width="768" height="1024" style="width:100%;height:auto;border-radius:14px"></picture><strong style="position:absolute;left:14px;bottom:14px;background:#2563eb;color:#fff;padding:8px 14px;border-radius:999px">After</strong></div><figcaption style="grid-column:1/-1;color:#475569">Real CleanGutters Lighting installation—owner-installed, not a stock photo.</figcaption></figure></div></section>'''
+          for name in ['gutter-cleaning/index.html','gutter-repair/index.html','gutter-installation/index.html']:
+              p = Path(name)
+              text = p.read_text()
+              if marker not in text:
+                  text = text.replace('<section class="section proof">', service_section + '<section class="section proof">', 1)
+                  p.write_text(text)
+          PY
+      - name: Commit sections
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html gutter-cleaning/index.html gutter-repair/index.html gutter-installation/index.html
+          git commit -m 'Add real gutter guard before and after sections'
+          git push
