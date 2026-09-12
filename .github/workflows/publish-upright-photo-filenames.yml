@@ -1,0 +1,39 @@
+name: Publish upright photos with new filenames
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/publish-upright-photo-filenames.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download verified upright photos under clean filenames
+        run: |
+          curl -L "https://cleangutters-pa.com/images/alex-owner-installing-gutter-guards.jpg" -o images/alex-owner-installing-gutter-guards-upright.jpg
+          curl -L "https://cleangutters-pa.com/images/alex-owner-installing-gutter-guards.webp" -o images/alex-owner-installing-gutter-guards-upright.webp
+          curl -L "https://cleangutters-pa.com/images/gutter-guard-micro-mesh-installed.jpg" -o images/gutter-guard-micro-mesh-installed-upright.jpg
+          curl -L "https://cleangutters-pa.com/images/gutter-guard-micro-mesh-installed.webp" -o images/gutter-guard-micro-mesh-installed-upright.webp
+          python - <<'PY'
+          from pathlib import Path
+          for name in ['index.html','gutter-cleaning/index.html','gutter-repair/index.html','gutter-installation/index.html']:
+              p=Path(name)
+              s=p.read_text()
+              s=s.replace('alex-owner-installing-gutter-guards.webp','alex-owner-installing-gutter-guards-upright.webp')
+              s=s.replace('alex-owner-installing-gutter-guards.jpg','alex-owner-installing-gutter-guards-upright.jpg')
+              s=s.replace('gutter-guard-micro-mesh-installed.webp','gutter-guard-micro-mesh-installed-upright.webp')
+              s=s.replace('gutter-guard-micro-mesh-installed.jpg','gutter-guard-micro-mesh-installed-upright.jpg')
+              p.write_text(s)
+          PY
+      - name: Commit cache-safe upright photos
+        run: |
+          git config user.name "CleanGutters site updater"
+          git config user.email "actions@users.noreply.github.com"
+          git add images/*-upright.jpg images/*-upright.webp index.html gutter-cleaning/index.html gutter-repair/index.html gutter-installation/index.html
+          git commit -m "Publish upright photos with cache-safe filenames"
+          git push
