@@ -11,7 +11,7 @@ if (!source.includes(trackingMarker)) {
 }
 source = source.replace(trackingMarker, trackingReplacement);
 
-const offerMarker = '        <p class="form-sub">⏱ Alex usually responds within 2 business hours</p>';
+const offerMarker = '        <p class="form-sub">Real South Jersey work · Alex usually responds within 2 business hours</p>';
 const offerReplacement = '        <p class="form-sub"><strong>Fall offer: Save $250 on a new gutter guard installation.</strong><br>Seniors and military get 10% off instead — whichever saves more. New installations only. Discounts cannot be combined. Book your free estimate by October 31, 2026. No pressure.</p>';
 
 if (!source.includes(offerMarker)) {
