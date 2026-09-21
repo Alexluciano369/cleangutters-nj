@@ -1,0 +1,41 @@
+name: Install website call tracking
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add Google website-call number replacement
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          conversion = "gtag('config', 'AW-18146670851/OnzICJfTuoAdEIPygM1D', { 'phone_conversion_number': '(856) 874-6640' });"
+
+          root = Path('index.html')
+          text = root.read_text()
+          if 'OnzICJfTuoAdEIPygM1D' not in text:
+              anchor = "gtag('config', 'G-E7NG44429T');"
+              if anchor not in text:
+                  raise SystemExit('Root tracking anchor not found')
+              text = text.replace(anchor, anchor + "\n    " + conversion, 1)
+              root.write_text(text)
+
+          services = Path('service-page.js')
+          text = services.read_text()
+          if 'OnzICJfTuoAdEIPygM1D' not in text:
+              anchor = "gtag('config','G-E7NG44429T');"
+              if anchor not in text:
+                  raise SystemExit('Service tracking anchor not found')
+              text = text.replace(anchor, anchor + conversion, 1)
+              services.write_text(text)
+          PY
+      - name: Commit tracking
+        run: |
+          git config user.name "Ryze Tracking"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html service-page.js
+          git diff --cached --quiet || git commit -m "Track completed website calls after 30 seconds"
+          git push
