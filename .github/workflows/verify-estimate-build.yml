@@ -1,0 +1,27 @@
+name: Verify estimate repair build
+on:
+  push:
+    paths:
+      - 'scripts/inject-confirmed-lead.mjs'
+      - '.github/workflows/verify-estimate-build.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build and verify repeat-build safety
+        run: |
+          node scripts/inject-confirmed-lead.mjs
+          node scripts/inject-confirmed-lead.mjs
+          node --check estimate-form.js
+          node --check service-page.js
+          test "$(grep -o '/estimate-form.js' index.html | wc -l)" -eq 1
+          test "$(grep -o '/estimate-form.js' gutters-v2.html | wc -l)" -eq 1
+          ! grep -q 'agents.runlobster.com/hooks/leads' index.html gutters-v2.html cherry-hill-gutter-guards.html gutter-guard-installation-near-cherry-hill/index.html
+          ! grep -q 'formsubmit.co' service-page.js
