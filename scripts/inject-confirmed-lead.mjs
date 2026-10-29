@@ -88,7 +88,7 @@ function attach(html) {
   if (!html.includes('</body>')) throw new Error('Missing body close');
   return html.replace('</body>', tag + '\n</body>');
 }
-for (const path of ['index.html', 'gutters-v2.html', 'cherry-hill-gutter-guards.html']) {
+for (const path of ['index.html', 'gutters-v2.html', 'cherry-hill-gutter-guards.html', 'gutter-guard-installation-near-cherry-hill/index.html']) {
   let html = path === 'index.html' ? source : await readFile(new URL(path, root), 'utf8');
   const startMarker = "document.getElementById('leadForm').addEventListener('submit',";
   const start = html.indexOf(startMarker);
@@ -109,7 +109,7 @@ const serviceEnd = serviceJs.indexOf("document.querySelectorAll('a[href^=\"tel:\
 if (serviceStart !== -1 && serviceEnd > serviceStart) serviceJs = serviceJs.slice(0, serviceStart) + serviceJs.slice(serviceEnd);
 else if (serviceJs.includes('formsubmit.co')) throw new Error('Service form boundary missing');
 planned.set('service-page.js', serviceJs);
-for (const path of ['gutter-cleaning/index.html', 'gutter-installation/index.html', 'gutter-repair/index.html', 'gutter-guard-installation-near-cherry-hill/index.html']) {
+for (const path of ['gutter-cleaning/index.html', 'gutter-installation/index.html', 'gutter-repair/index.html']) {
   const html = await readFile(new URL(path, root), 'utf8');
   if (!html.includes('data-lead-form')) throw new Error('Service form missing in ' + path);
   planned.set(path, attach(html));
