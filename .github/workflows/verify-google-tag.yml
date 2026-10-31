@@ -1,0 +1,40 @@
+name: Verify NJ Google tag
+on:
+  push:
+    paths:
+      - 'scripts/normalize-google-tag.mjs'
+      - 'scripts/inject-confirmed-lead.mjs'
+      - 'netlify.toml'
+      - '.github/workflows/verify-google-tag.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build tracking repair and verify repeat-build safety
+        run: |
+          node scripts/inject-confirmed-lead.mjs
+          cp index.html /tmp/before-google-tag.html
+          node scripts/normalize-google-tag.mjs
+          cp index.html /tmp/after-google-tag.html
+          node scripts/normalize-google-tag.mjs
+          cmp index.html /tmp/after-google-tag.html
+          node --check estimate-form.js
+          node --check service-page.js
+          node --input-type=module <<'JS'
+          import { readFileSync } from 'node:fs';
+          import assert from 'node:assert/strict';
+          const before = readFileSync('/tmp/before-google-tag.html', 'utf8');
+          const after = readFileSync('index.html', 'utf8');
+          assert.equal(before.slice(before.indexOf('<body>')), after.slice(after.indexOf('<body>')));
+          assert(after.indexOf('nj-standard-google-tag-20261031') < after.indexOf('<meta charset'));
+          assert(!after.includes('function loadGtag()'));
+          assert(!after.includes('send_page_view: false'));
+          console.log('Google tag normalized; entire page body unchanged; repeat build safe.');
+          JS
