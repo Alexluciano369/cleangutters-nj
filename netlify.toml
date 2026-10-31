@@ -1,5 +1,5 @@
 [build]
-  command = "node scripts/inject-confirmed-lead.mjs"
+  command = "node scripts/inject-confirmed-lead.mjs && node scripts/normalize-google-tag.mjs"
   publish = "."
 
 # This domain is for paid campaign landing pages. Organic search belongs to cleangutterslighting.com.
