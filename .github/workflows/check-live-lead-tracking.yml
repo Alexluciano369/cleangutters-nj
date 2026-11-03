@@ -1,0 +1,58 @@
+name: Check live NJ lead tracking
+on:
+  push:
+    paths:
+      - '.github/workflows/check-live-lead-tracking.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save playwright
+      - run: npx playwright install --with-deps chromium
+      - name: Verify live Google request after confirmed form acceptance
+        run: |
+          node --input-type=module <<'JS'
+          import { chromium } from 'playwright';
+          import assert from 'node:assert/strict';
+          const browser = await chromium.launch({headless:true});
+          const page = await browser.newPage();
+          const hits = [], failures = [], errors = [];
+          const isLead = url => /(?:googleadservices|doubleclick|google)\./.test(url) && url.includes('HZx0COTCwqocEIPygM1D');
+          page.on('response', r => { if(isLead(r.url())) hits.push({status:r.status(), url:r.url()}); });
+          page.on('requestfailed', r => { if(isLead(r.url())) failures.push({url:r.url(),error:r.failure()}); });
+          page.on('pageerror', e => errors.push(e.message));
+          // Real delivery was separately tested through the visible live form.
+          // Stub delivery only here to avoid adding another synthetic inquiry.
+          let accepted = 0;
+          await page.route('**/functions/v1/submit-estimate', async route => {
+            if(route.request().method() === 'OPTIONS') return route.fulfill({status:204,headers:{'access-control-allow-origin':'*','access-control-allow-headers':'content-type','access-control-allow-methods':'POST, OPTIONS'}});
+            accepted++;
+            await route.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify({success:true})});
+          });
+          await page.goto('https://cleangutters-nj.com/', {waitUntil:'networkidle'});
+          console.log('BEFORE', JSON.stringify(await page.evaluate(() => ({gtag:typeof window.gtag,configs:(window.dataLayer||[]).filter(x=>x[0]==='config').map(x=>Array.from(x)),formBound:document.querySelector('#leadForm')?.dataset.estimateBound}))));
+          assert.equal(await page.evaluate(()=>typeof window.gtag),'function');
+          assert.equal(hits.length,0,'Form conversion must not fire just from a page visit');
+          await page.locator('#name').fill('AUTOMATED TRACKING CHECK - NOT A CUSTOMER');
+          await page.locator('#phone').fill('2025550147');
+          await page.locator('#leadForm button[type=submit]').click();
+          await page.locator('#formSuccess').waitFor({state:'visible'});
+          await page.waitForTimeout(15000);
+          const events = await page.evaluate(()=>(window.dataLayer||[]).filter(x=>x[0]==='event').map(x=>Array.from(x)));
+          console.log('EVENTS',JSON.stringify(events));
+          console.log('GOOGLE_LEAD_RESPONSES',JSON.stringify(hits));
+          console.log('FAILED_LEAD_REQUESTS',JSON.stringify(failures));
+          console.log('PAGE_ERRORS',JSON.stringify(errors));
+          assert.equal(accepted,1,'Exactly one accepted form submission');
+          assert.equal(events.filter(x=>x[1]==='conversion' && x[2]?.send_to==='AW-18146670851/HZx0COTCwqocEIPygM1D').length,1,'Exactly one correct form conversion command');
+          assert(hits.some(x=>x.status>=200&&x.status<300),'Google must return a successful response to the lead conversion request');
+          await browser.close();
+          console.log('PASS: live page sends the correct Google lead conversion after acceptance, never on page load. This does not verify paid-click attribution or inbox delivery.');
+          JS
